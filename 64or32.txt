@@ -1,0 +1,12 @@
+[Environment]::Is64BitProcess
+
+
+run that to see if you are in a 64 or 32 bit session
+
+or 
+
+[intptr]::Size  your get a result of 4 for 32bit and 8 for 64 bit.
+
+Start job uses a runas32 switch. Very cool! so this is how to run a 32 bit of code within a 64 bit session.
+
+start-job { [intptr]::Size } -RunAs32 | wait-job | Receive-Job
