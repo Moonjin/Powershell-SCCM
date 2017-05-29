@@ -7,4 +7,4 @@ The code has also been cleaned up so I don't expose my companys internal working
 Most scripts have explanations and notations. for example 
 -#    # This is a powershell script.
 
-If anyone finds this usful it has been worth uploading.
+If anyone finds this useful it has been worth uploading.
