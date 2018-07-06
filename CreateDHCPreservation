@@ -1,0 +1,51 @@
+
+
+ 
+#Collect information from new server.
+
+$servername = $env:computername
+$netconfig = Get-WmiObject  win32_networkadapterconfiguration -ComputerName $servername | 
+where {($_.dhcpenabled -eq $true) -and ($_.description -like "vmxnet3*")}
+$GW = ($netconfig | select defaultIPgateway).defaultipgateway
+$nic = ($netconfig).ipaddress | select -first 1
+$Scope = ($GW.substring("0","9")) + "0"
+
+
+#List of DHCP servers.
+$DHCPservers = @(
+"Your dhcp servername"
+)
+
+#Find out which DHCP server has the new servers lease.
+$DHCPsvr = foreach ($serv in [array]$DHCPservers){
+                
+            if ([bool](Get-DhcpServerv4Scope -ComputerName $serv -ScopeId $Scope -ErrorAction SilentlyContinue)) 
+                
+            {$serv}
+}
+
+##error check the $dhcp variable here and send email if it fails.
+
+if ($DHCPsvr -eq $null) 
+
+    {
+    $body = "Failed to create a DHCP reservation for $servername. DHCP server not found by script. Please manually create the reservation."
+    Send-MailMessage -From stephen@gmail.com -to stephen@gmail.com -SmtpServer smtp.server.com `
+             -subject "Server Build $servername failure" -Body $body  
+    }
+
+
+#Add the reservation for the new servers lease.
+$clientid = (Get-DhcpServerv4Lease -ComputerName $DHCPsvr -IPAddress $nic | select clientid).clientid
+
+Add-DhcpServerv4Reservation -ComputerName $DHCPsvr -ClientId $clientid -ScopeId $Scope -IPAddress $nic 
+
+#if reservation not created send email.
+
+if (![bool](Get-DhcpServerv4Reservation -ComputerName $DHCPsvr -ClientId $clientid -ScopeId $Scope))
+
+    {
+     $body = "Failed to create a DHCP reservation for $servername. Please manually create the reservation."
+     Send-MailMessage -From stephen@gmail.com -to stephen@gmail.com -SmtpServer smtp.server.com `
+             -subject "Server Build $($servername.toupper()) failure" -Body $body  
+    }
