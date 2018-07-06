@@ -1,0 +1,18 @@
+function Get-SCCMinfo
+{
+
+$tabs = @(
+'https://www.systemcenterdudes.com/blog'
+'https://cloudblogs.microsoft.com/enterprisemobility/?product=system-center-configuration-manager'
+'https://redmondmag.com/pages/topic-pages/win-8-win-server-2012.aspx'
+'https://channel9.msdn.com/Tags/system+center+configuration+manager'
+'https://prajwaldesai.com/sccm/'
+'https://portal.msrc.microsoft.com/en-us/security-guidance'
+'https://social.technet.microsoft.com/Forums/en-US/home?category=ConfigMgrCB'
+)
+
+start-process "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" -ArgumentList $tabs
+
+}
+
+Get-SCCMinfo
