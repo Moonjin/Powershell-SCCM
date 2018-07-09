@@ -1,0 +1,23 @@
+#------------------------------------------------------------------------
+# NAME: Remove CMdevice
+# AUTHOR: Steve Moore
+# DATE:Monday, 9 July 2018
+#  
+#
+# COMMENTS:
+# Used to remove SCCM devices that appear in SCCM but not in Active Directory.
+# Use get-cmdevice to ensure you are targeting the correct devices.
+
+
+# ----------------------------------------------------------
+
+
+$serverList | foreach {
+if (![bool](Test-Connection -ComputerName $_ -Count 1 -Quiet))
+        {
+        #get-cmdevice -Name $_
+
+        remove-cmdevice -Name $_ -Verbose 
+
+        }
+}
